@@ -49,6 +49,16 @@ input:focus
 	height: 10px;
 }
 
+@media only screen and (max-device-width: 768px)
+{
+	input,
+	input:focus
+	{
+		width: 80%;
+	}
+}
+
+
 /*removes the arrow buttons in input*/
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button
@@ -86,7 +96,7 @@ th,
 td
 {
 	border-collapse: collapse;
-	font-size: large;
+	font-size: x-large;
 }
 
 th,
