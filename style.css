@@ -46,7 +46,9 @@ input:focus
 	border: 2px solid rgba(128, 128, 128, 0.9);
 
 	width: 50%;
-	height: 10px;
+	height: 15px;
+
+	font-size: x-large;
 }
 
 @media only screen and (max-device-width: 768px)
@@ -55,6 +57,8 @@ input:focus
 	input:focus
 	{
 		width: 80%;
+
+		font-size: large;
 	}
 }
 
@@ -79,6 +83,8 @@ table
 	text-align: center;
 
 	width: 80%;
+
+	overflow: hidden;
 }
 
 tr:nth-child(odd)
@@ -148,7 +154,7 @@ td:nth-child(2)
 }
 
 th:last-child,
-th:first-child
+td:last-child
 {
 	width: 40%;
 }
