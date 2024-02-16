@@ -1,6 +1,12 @@
-let numOfRows
-let rowArr = []
-let inputValue
+import { DOMBuilder } from "./JSModules/dom_builder.js"
+import { Helper } from "./JSModules/helper.js"
+
+const g_Helper = new Helper()
+const g_Builder = new DOMBuilder()
+
+var numOfRows
+var inputValue
+var currentRow
 
 /*
 *   Sets the number of rows to be displayed for the multiplication table
@@ -9,20 +15,21 @@ let inputValue
 */
 function setNumOfRows()
 {
-    if (inputValue < 12) numOfRows = 12 //have at least 12 rows
-    else numOfRows = inputValue;
+	if (inputValue < 12) numOfRows = 12 //have at least 12 rows
+	else numOfRows = inputValue;
 }
 
 /*
-*   Removes the table from the body if there is one
+*   Clears the table body from the body if there is one
 */
 function clearTable()
 {
-    let temp = document.querySelector("table")
+	g_Helper.destroyTimer("table_setup")
 
-    //remove table if there is one
-    if (temp)
-        temp.remove()
+	const multiplicationBody = document.querySelector("#multiplication_body")
+
+	if (multiplicationBody)
+		multiplicationBody.innerHTML = ""
 }
 
 /*
@@ -30,90 +37,92 @@ function clearTable()
 */
 function createTable()
 {
-    clearTable()
+	clearTable()
 
-    // return if blank inputValue
-    if(!inputValue && inputValue != 0) return
+	// return if blank inputValue
+	if (!inputValue && inputValue != 0) return
+	if (!g_Helper.isNumber(inputValue)) return
 
-    const table = document.createElement("table")
+	const multiplicationBody = document.querySelector("#multiplication_body")
+	if (!multiplicationBody) return
 
-    // create header elements
-    const tableHeaderRow = document.createElement("tr")
-    const headerMultiplicand = document.createElement('th')
-    const headerMutliplier  = document.createElement('th')
-    const product  = document.createElement('th')
+	currentRow = 0
 
-    // set headers text
-    headerMultiplicand.innerHTML = "Multiplicand"
-    headerMutliplier.innerHTML = "Multiplier"
-    product.innerHTML = "Product"
+	g_Helper.createTimer("table_setup", 0.01, () =>
+	{
+		const startRow = currentRow
+		const endRow = g_Helper.clamp(startRow + 128, null, numOfRows)
 
-    // adding headers and headerRow to table
-    tableHeaderRow.appendChild(headerMultiplicand)
-    tableHeaderRow.appendChild(headerMutliplier)
-    tableHeaderRow.appendChild(product)
-    table.appendChild(tableHeaderRow)
+		g_Builder.start(multiplicationBody)
+		{
+			for (currentRow = startRow; currentRow < endRow; currentRow++)
+			{
+				g_Builder.startElement("tr")
+				{
+					// first column - the inputted value (multiplicand)
+					g_Builder.startElement("td")
+					{
+						g_Builder.setProperty("innerHTML", inputValue)
+					}
+					g_Builder.endElement()
 
+					//second column - the multiplier
+					g_Builder.startElement("td")
+					{
+						g_Builder.setProperty("innerHTML", currentRow + 1)
+					}
+					g_Builder.endElement()
 
-    let tableRows = []
+					//third column - the product
+					g_Builder.startElement("td")
+					{
+						g_Builder.setProperty("innerHTML", inputValue * (currentRow + 1))
+					}
+					g_Builder.endElement()
+				}
+				g_Builder.endElement()
+			}
+		}
+		g_Builder.end()
 
-    for (let i = 0; i < numOfRows; i++)
-    {
-        // create tr and td
-        let tr = document.createElement('tr')
-        let td1 = document.createElement('td');
-        let td2 = document.createElement('td');
-        let td3 = document.createElement('td');
+		currentRow++
 
-        // add values to td in the row
-        td1.innerHTML = inputValue;
-        td2.innerHTML = i+1
-        td3.innerHTML = inputValue * (i+1);
-
-        //add td to row
-        tr.appendChild(td1)
-        tr.appendChild(td2)
-        tr.appendChild(td3)
-
-        // store all the rows in an array
-        tableRows.push(tr)
-    }
-
-    // add tr to table
-    for (const row of tableRows)
-        table.appendChild(row)
-
-    // add table to body
-    document.body.appendChild(table);
+		if (currentRow >= numOfRows)
+			g_Helper.destroyTimer("table_setup")
+	})
 }
 
 // --------------------------------------------------------------
-window.onload = () =>
+
+g_Helper.hookEvent(window, "load", false, () =>
 {
-    const input = document.getElementById("input");
+	const input = document.getElementById("input")
 
-    input.onkeyup = (event) => {
-        event.preventDefault()
+	if (!input) return
 
-        inputValue = parseFloat(input.value)
+	g_Helper.hookEvent(input, "keyup", true, () =>
+	{
+		event.preventDefault()
 
-        // return if not Enter key
-        // https://www.w3schools.com/jsref/event_key_key.asp
-        if (event.key != "Enter") return
+		inputValue = parseFloat(input.value)
 
-        //https://www.w3schools.com/jsref/event_key_keycode.asp
-        if (event.keyCode != 13) return
+		// return if not Enter key
+		// https://www.w3schools.com/jsref/event_key_key.asp
+		if (event.key != "Enter") return
+
+		//https://www.w3schools.com/jsref/event_key_keycode.asp
+		if (event.keyCode != 13) return
 
 
-        if (inputValue <= Number.MIN_SAFE_INTEGER || inputValue >= Number.MAX_SAFE_INTEGER) {
-            input.value = null
-            return
-        }
+		if (inputValue <= Number.MIN_SAFE_INTEGER || inputValue >= Number.MAX_SAFE_INTEGER) {
+			input.value = null
+			return
+		}
 
-        setNumOfRows()
+		setNumOfRows()
 
-        createTable()
+		createTable()
 
-        input.value = null
-    }
-}
+		input.value = null
+	})
+})
