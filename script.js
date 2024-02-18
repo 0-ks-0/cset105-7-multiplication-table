@@ -96,6 +96,23 @@ function createTable()
 
 g_Helper.hookEvent(window, "load", false, () =>
 {
+	// ------------ up arrow ------------
+	const upArrow = document.querySelector("#up_arrow")
+
+	if (!upArrow) return
+
+	// setting up arrow for scrolling to top of page
+	upArrow.onclick = () =>
+	{
+		// https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollTo
+		window.scrollTo({
+			top: 0,
+			left: 0,
+			behavior: "smooth"
+		})
+	}
+
+	// ------------ input ------------
 	const input = document.getElementById("input")
 
 	if (!input) return
