@@ -14,6 +14,11 @@
 	font-style: normal;
 }
 
+html
+{
+	width: 100%;
+}
+
 body
 {
 	width: 100%;
@@ -22,7 +27,7 @@ body
 	flex-direction: column;
 	align-items: center;
 
-	padding: 2em;
+	padding-top: 2em;
 }
 
 
@@ -82,9 +87,21 @@ table
 
 	text-align: center;
 
-	width: 80%;
-
 	overflow: hidden;
+
+	width: 80%;
+	max-width: 80%;
+
+	table-layout: fixed;
+}
+
+@media only screen and (max-device-width: 768px)
+{
+	table
+	{
+		width: 90%;
+		max-width: 90%;
+	}
 }
 
 tr:nth-child(odd)
@@ -126,37 +143,19 @@ th:first-child
 	border-top-left-radius: 15px;
 }
 
-th:last-child {
+th:last-child
+{
 	border-top-right-radius: 15px;
 }
 
-tr:last-child td:first-child {
+tr:last-child td:first-child
+{
 	border-bottom-left-radius: 15px;
 }
 
-tr:last-child td:last-child {
+tr:last-child td:last-child
+{
 	border-bottom-right-radius: 15px;
-}
-
-/*
-*	Setting up column width
-*/
-th:first-child,
-td:first-child
-{
-	width: 30%;
-}
-
-th:nth-child(2),
-td:nth-child(2)
-{
-	width: 30%;
-}
-
-th:last-child,
-td:last-child
-{
-	width: 40%;
 }
 
 /*
